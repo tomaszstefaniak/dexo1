@@ -25,7 +25,7 @@ const Header: React.FC<{ setIsWalletModalOpen(toggle: boolean): void }> = ({ set
       <div className="w-full flex items-center justify-between ">
         <a href={jupiterDirectLink} target={'_blank'} rel="noreferrer noopener" className="flex items-center space-x-2">
           <JupiterLogo width={24} height={24} />
-          <span className="font-bold text-sm text-white">Jupiter</span>
+          <span className="font-bold text-sm text-white">dice dex</span>
         </a>
 
         <div className="flex space-x-1 items-center">

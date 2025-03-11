@@ -48,21 +48,21 @@ const HeaderLinks = () => {
     <div className="flex-1 justify-center hidden md:!flex text-sm h-full">
       <HeaderLink href="/" isActive title={'Demo'} icon={<SwapIcon width="20" height="20" />} />
       <HeaderLink
-        href="https://github.com/jup-ag/terminal"
+        href="https://myweb3apps.com"
         isActive={false}
         external
         title={'Repo'}
         icon={<RepoLogo width="20" height="20" />}
       />
       <HeaderLink
-        href="https://station.jup.ag/docs/tool-kits/terminal-walkthrough"
+        href="https://myweb3apps.com"
         isActive={false}
         external
         title={'Docs'}
         icon={<RepoLogo width="20" height="20" />}
       />
       <HeaderLink
-        href="https://discord.gg/jup"
+        href="https://discord.com/invite/jCxDe3BGUU"
         isActive={false}
         external
         title={'Discord'}

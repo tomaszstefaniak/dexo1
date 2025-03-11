@@ -16,7 +16,16 @@ import dynamic from 'next/dynamic';
 import { useQuery } from '@tanstack/react-query';
 import { cn } from 'src/misc/cn';
 
-const SyntaxHighlighter = dynamic(() => import('react-syntax-highlighter'), { ssr: false });
+import type { SyntaxHighlighterProps } from 'react-syntax-highlighter';
+
+// Force-cast the module’s default export to a React component:
+const SyntaxHighlighter = dynamic(
+  () =>
+    import('react-syntax-highlighter').then((mod) => ({
+      default: mod.default as unknown as React.ComponentType<SyntaxHighlighterProps>,
+    })),
+  { ssr: false }
+);
 
 const CodeBlocks = ({
   formConfigurator,
@@ -27,11 +36,15 @@ const CodeBlocks = ({
 }) => {
   const DISPLAY_MODE_VALUES = (() => {
     if (displayMode === 'modal') return {};
-    if (displayMode === 'integrated') return { displayMode: 'integrated', integratedTargetId: 'integrated-terminal' };
-    if (displayMode === 'widget') return { displayMode: 'widget' };
+    if (displayMode === 'integrated') {
+      return { displayMode: 'integrated', integratedTargetId: 'integrated-terminal' };
+    }
+    if (displayMode === 'widget') {
+      return { displayMode: 'widget' };
+    }
+    return {};
   })();
 
-  // Filter out the key that's not default
   const filteredFormProps = Object.keys(formConfigurator.formProps).reduce<Partial<FormProps>>((acc, key) => {
     const itemKey = key as keyof FormProps;
     if (formConfigurator.formProps[itemKey] !== INITIAL_FORM_CONFIG.formProps[itemKey]) {
@@ -68,7 +81,6 @@ const CodeBlocks = ({
 `;
 
   const origin = typeof window !== 'undefined' && window.location.origin ? window.location.origin : '';
-
   const headTag = `<!-- Attach the loading script in your <head /> -->
 <script src='${origin}/main-v4.js'></script>
 `;
@@ -80,16 +92,16 @@ const CodeBlocks = ({
 <div id="integrated-terminal" style="width: 400px; height: 568px;"></div>
 `;
     }
-
     return '';
   }, [displayMode]);
 
   const INIT_SNIPPET = `
   window.Jupiter.init(${formPropsSnippet});
   `;
-  const unformattedSnippet = [formConfigurator.simulateWalletPassthrough ? USE_WALLET_SNIPPET : '', INIT_SNIPPET].join(
-    '\n',
-  );
+  const unformattedSnippet = [
+    formConfigurator.simulateWalletPassthrough ? USE_WALLET_SNIPPET : '',
+    INIT_SNIPPET,
+  ].join('\n');
 
   const { data: npmSnippet, refetch: refetchNpmSnippet } = useQuery<string>(
     ['npmSnippet'],
@@ -116,9 +128,7 @@ const CodeBlocks = ({
       );
       return formatted;
     },
-    {
-      initialData: '',
-    },
+    { initialData: '' },
   );
 
   const [snippet, setSnippet] = useState(``);
@@ -136,11 +146,13 @@ const CodeBlocks = ({
 
   const documentSnippet = useMemo(() => [headTag, bodyTag].filter(Boolean).join('\n'), [headTag, bodyTag]);
 
+  // Copy snippet
   const [isCopied, setIsCopied] = useState(false);
   useEffect(() => {
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       setIsCopied(false);
     }, 2000);
+    return () => clearTimeout(timer);
   }, [isCopied]);
 
   const copyToClipboard = () => {
@@ -149,15 +161,17 @@ const CodeBlocks = ({
     setIsCopied(true);
   };
 
+  // Copy share link
   const [isCopiedShareLink, setIsCopiedShareLink] = useState(false);
   useEffect(() => {
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       setIsCopiedShareLink(false);
     }, 2000);
+    return () => clearTimeout(timer);
   }, [isCopiedShareLink]);
+
   const copyShareLink = () => {
     if (typeof window === 'undefined') return;
-
     const stringifiedQuery = JSON.stringify(jsonToBase64(valuesToFormat));
     navigator.clipboard.writeText(`${window.location.origin}?import=${stringifiedQuery.replaceAll('"', '')}`);
     setIsCopiedShareLink(true);

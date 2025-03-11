@@ -81,8 +81,8 @@ export const useExecuteTransaction = () => {
             lastValidBlockHeight: options.lastValidBlockHeight,
             signedTransaction: signedTx,
             skipPreflight: options.skipPreflight ?? true,
-            idl: IDL_V6,
-            idlProgramId: JUPITER_PROGRAM_V6_ID,
+            // idl: IDL_V6,
+            // idlProgramId: JUPITER_PROGRAM_V6_ID,
           });
           hasConfirmed = true;
 
