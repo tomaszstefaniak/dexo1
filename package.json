@@ -4,7 +4,8 @@
   "private": false,
   "license": "MIT",
   "resolutions": {
-    "esbuild": "0.17.19"
+    "esbuild": "0.17.19",
+    "@types/react": "18.0.37"
   },
   "scripts": {
     "dev": "next dev",
