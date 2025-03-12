@@ -67,6 +67,11 @@ module.exports = {
           fullySpecified: false,
         },
       },
+      // Asset loader for images
+      {
+        test: /\.(png|jpe?g|gif)$/i,
+        type: 'asset/resource',
+      },
     ],
   },
   plugins: (() => {
@@ -78,7 +83,7 @@ module.exports = {
     ];
 
     if (analyseBundle) {
-      plugins.push(new BundleAnalyzerPlugin())
+      plugins.push(new BundleAnalyzerPlugin());
     }
 
     return plugins;
@@ -91,7 +96,7 @@ module.exports = {
     alias: {
       src: path.resolve(__dirname, "src"),
       public: path.resolve(__dirname, "public"),
-      './../tokens/solana.tokenlist.json': false
+      './../tokens/solana.tokenlist.json': false,
     },
   },
   target: "web",
