@@ -1,4 +1,4 @@
-import { createRoot } from 'react-dom/client';
+import { createRoot, reactNode } from 'react-dom/client';
 import { atom, createStore } from 'jotai';
 import { CSSProperties, useEffect, useMemo, useState } from 'react';
 
@@ -296,7 +296,7 @@ async function init(passedProps: IInit) {
     window.Jupiter.enableWalletPassthrough = false;
   }
 
-  let element;
+  let element: ReactNode;
   if (restProps.displayMode === 'widget') {
     element = <RenderWidgetShell {...props} />;
   } else {
