@@ -1,5 +1,4 @@
 const path = require("path");
-// Polyfill all the node stuff
 const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
@@ -10,25 +9,15 @@ const packageJson = require("./package.json");
 const analyseBundle = process.env.ANALYSE === 'true';
 const bundleName = `main-${packageJson.version}`;
 
-if (!bundleName) {
-  throw new Error('Bundle name/version is not set');
-}
-
 module.exports = {
   devtool: "source-map",
   mode: "production",
   entry: {
-    "Jupiter": {
-      import: "./src/library.tsx",
-      filename: `${bundleName}.js`,
-    },
-    "Tailwind": {
-      import: "./src/styles/globals.css",
-    },
-    "JupiterRenderer": {
+    Jupiter: "./src/library.tsx",
+    Tailwind: "./src/styles/globals.css",
+    JupiterRenderer: {
       dependOn: "Jupiter",
       import: "./src/index.tsx",
-      filename: `${bundleName}-app.js`,
     },
   },
   cache: {
@@ -36,7 +25,6 @@ module.exports = {
   },
   module: {
     rules: [
-      // Tailwind support
       {
         test: /\.css$/i,
         use: [MiniCssExtractPlugin.loader, "css-loader", "postcss-loader"],
@@ -47,12 +35,11 @@ module.exports = {
           {
             loader: 'ts-loader',
             options: {
-              // To compile for client
               compilerOptions: {
                 "jsx": "react-jsx",
               },
-            }
-          }
+            },
+          },
         ],
         exclude: /node_modules/,
       },
@@ -60,14 +47,12 @@ module.exports = {
         test: /\.svg$/,
         loader: "svg-inline-loader",
       },
-      // Some libs are module based
       {
         test: /\.m?js/,
         resolve: {
           fullySpecified: false,
         },
       },
-      // Asset loader for images
       {
         test: /\.(png|jpe?g|gif)$/i,
         type: 'asset/resource',
@@ -103,14 +88,26 @@ module.exports = {
   output: {
     library: "[name]",
     libraryTarget: "window",
+    filename: `${bundleName}-[name].js`, // 👈 Use dynamic naming here
+    chunkFilename: `${bundleName}-[name]-chunk.js`, // 👈 Fixes chunk conflict
     path: path.resolve(__dirname, "public"),
     publicPath: "/public/",
   },
   optimization: {
     minimizer: [
-      '...', // Include existing minimizer.
+      '...',
       new CssMinimizerPlugin(),
     ],
     minimize: true,
-  }
+    splitChunks: {
+      chunks: 'all',
+      minSize: 20000,
+      maxSize: 250000,
+    },
+  },
+  performance: {
+    hints: 'warning',
+    maxEntrypointSize: 512000,
+    maxAssetSize: 512000,
+  },
 };
